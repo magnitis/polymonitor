@@ -1,0 +1,56 @@
+# Polymarket Climate Monitor - Dependencies
+# Python 3.10+ required
+
+# HTTP & API
+requests>=2.31.0
+aiohttp>=3.9.0
+urllib3>=2.0.0
+
+# Data Models & Validation
+pydantic>=2.5.0
+pydantic-settings>=2.1.0
+
+# Configuration
+python-dotenv>=1.0.0
+pyyaml>=6.0.1
+
+# CLI & Display
+click>=8.1.7
+rich>=13.7.0
+colorama>=0.4.6
+
+# Data Processing
+pandas>=2.1.0
+numpy>=1.26.0
+
+# Caching
+diskcache>=5.6.3
+
+# Scheduling
+schedule>=1.2.1
+apscheduler>=3.10.4
+
+# Trading (Polymarket CLOB client)
+py-clob-client>=0.17.0
+
+# Dashboard (optional)
+streamlit>=1.29.0
+plotly>=5.18.0
+
+# Notifications (optional)
+discord-webhook>=1.3.0
+
+# Testing
+pytest>=7.4.3
+pytest-asyncio>=0.23.0
+pytest-cov>=4.1.0
+responses>=0.24.0
+
+# Type checking & Linting
+mypy>=1.7.0
+types-requests>=2.31.0
+types-PyYAML>=6.0.12
+
+# Utilities
+python-dateutil>=2.8.2
+tenacity>=8.2.3

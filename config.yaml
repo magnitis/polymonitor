@@ -1,0 +1,227 @@
+# Polymarket Climate Monitor Configuration
+# Copy this file to config.local.yaml and customize for your setup
+
+# =============================================================================
+# API CONFIGURATION
+# =============================================================================
+api:
+  # Gamma API base URL
+  base_url: "https://gamma-api.polymarket.com"
+  
+  # Request settings
+  timeout: 30  # seconds
+  max_retries: 5
+  
+  # Rate limiting
+  rate_limit:
+    requests_per_minute: 60
+    initial_backoff: 1.0  # seconds
+    max_backoff: 60.0  # seconds
+    backoff_multiplier: 2.0
+  
+  # Pagination
+  page_size: 100
+
+# =============================================================================
+# CACHE CONFIGURATION
+# =============================================================================
+cache:
+  enabled: true
+  directory: ".cache/polymonitor"
+  
+  # Time-to-live for different data types (seconds)
+  ttl:
+    markets: 300       # 5 minutes - markets update frequently
+    tags: 3600         # 1 hour - tags rarely change
+    events: 600        # 10 minutes
+    historical: 86400  # 24 hours - historical data is static
+
+# =============================================================================
+# CLIMATE MARKET FILTERS
+# =============================================================================
+filters:
+  # Keywords to identify climate-related markets
+  climate_keywords:
+    - "temperature"
+    - "climate"
+    - "weather"
+    - "hurricane"
+    - "typhoon"
+    - "cyclone"
+    - "storm"
+    - "wildfire"
+    - "drought"
+    - "flood"
+    - "sea level"
+    - "ice"
+    - "arctic"
+    - "antarctic"
+    - "emissions"
+    - "carbon"
+    - "CO2"
+    - "greenhouse"
+    - "el niño"
+    - "la niña"
+    - "NOAA"
+    - "IPCC"
+    - "hottest"
+    - "coldest"
+    - "record high"
+    - "record low"
+    - "heat wave"
+    - "polar vortex"
+  
+  # Minimum liquidity threshold (USD)
+  min_liquidity: 1000
+  
+  # Only show active (non-closed) markets
+  active_only: true
+
+# =============================================================================
+# PROBABILITY MODEL CONFIGURATION
+# =============================================================================
+probability_model:
+  # Default model to use
+  default: "climate_composite"
+  
+  # Temperature markets
+  temperature:
+    # Historical data lookback (years)
+    lookback_years: 30
+    # Weight for trend vs historical percentile
+    trend_weight: 0.3
+    percentile_weight: 0.7
+  
+  # Hurricane/Storm markets
+  hurricane:
+    # Use NOAA ACE index for predictions
+    use_ace_index: true
+    # Seasonal adjustment factor
+    seasonal_weight: 0.4
+  
+  # Emissions markets
+  emissions:
+    # Trend analysis period (years)
+    trend_years: 10
+  
+  # Conviction thresholds
+  conviction:
+    low: 0.6
+    medium: 0.7
+    high: 0.85
+
+# =============================================================================
+# OPPORTUNITY DETECTION
+# =============================================================================
+opportunities:
+  # Minimum edge to flag an opportunity (0-1, 0.15 = 15%)
+  min_edge: 0.15
+  
+  # Edge thresholds for color coding
+  edge_thresholds:
+    good: 0.15      # Green
+    great: 0.25     # Yellow
+    excellent: 0.35 # Red (high conviction)
+  
+  # Ranking weights
+  ranking:
+    edge_weight: 0.5
+    liquidity_weight: 0.3
+    conviction_weight: 0.2
+
+# =============================================================================
+# TRADING CONFIGURATION (USE WITH CAUTION)
+# =============================================================================
+trading:
+  # IMPORTANT: Trading is disabled by default. Enable at your own risk.
+  enabled: false
+  
+  # API credentials (use environment variables instead!)
+  # private_key: ${POLYMARKET_PRIVATE_KEY}
+  # funder_address: ${POLYMARKET_FUNDER_ADDRESS}
+  
+  # Chain configuration
+  chain_id: 137  # Polygon mainnet
+  clob_host: "https://clob.polymarket.com"
+  
+  # Kelly Criterion settings
+  kelly:
+    # Fraction of Kelly to use (0.25 = quarter Kelly, safer)
+    fraction: 0.25
+    # Maximum bet as fraction of bankroll
+    max_bet_fraction: 0.05
+  
+  # Risk management
+  risk:
+    # Maximum bet per market (USD)
+    max_bet_per_market: 100
+    # Maximum total exposure (USD)
+    max_total_exposure: 1000
+    # Maximum number of open positions
+    max_open_positions: 10
+    # Minimum edge required for auto-trading
+    min_auto_trade_edge: 0.20
+  
+  # Slippage protection
+  slippage:
+    max_slippage: 0.02  # 2% max slippage
+    use_limit_orders: true
+
+# =============================================================================
+# MONITORING CONFIGURATION
+# =============================================================================
+monitoring:
+  # Scan interval (seconds)
+  interval: 300  # 5 minutes
+  
+  # Logging
+  log_file: "logs/polymonitor.log"
+  log_level: "INFO"
+  
+  # Opportunity logging
+  opportunities_file: "data/opportunities.json"
+  
+  # Performance tracking
+  track_performance: true
+  performance_file: "data/performance.json"
+
+# =============================================================================
+# NOTIFICATIONS
+# =============================================================================
+notifications:
+  # Enable notifications
+  enabled: false
+  
+  # Discord webhook (set via environment variable)
+  discord:
+    enabled: false
+    # webhook_url: ${DISCORD_WEBHOOK_URL}
+    # Minimum edge to trigger notification
+    min_edge_notify: 0.25
+  
+  # Email notifications (requires SMTP setup)
+  email:
+    enabled: false
+    # smtp_host: "smtp.gmail.com"
+    # smtp_port: 587
+    # sender: ${EMAIL_SENDER}
+    # recipient: ${EMAIL_RECIPIENT}
+
+# =============================================================================
+# DASHBOARD CONFIGURATION
+# =============================================================================
+dashboard:
+  host: "localhost"
+  port: 8501
+  refresh_interval: 60  # seconds
+
+# =============================================================================
+# BACKTESTING CONFIGURATION
+# =============================================================================
+backtest:
+  # Historical data directory
+  data_dir: "data/historical"
+  # Start date for backtesting
+  start_date: "2024-01-01"
+  # Initial bankroll for simulation
+  initial_bankroll: 10000
